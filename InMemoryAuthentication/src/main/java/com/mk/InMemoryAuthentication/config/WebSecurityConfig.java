@@ -1,10 +1,15 @@
 package com.mk.InMemoryAuthentication.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -46,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		 
 		
 	}
+	//===================================IN Memory Authentication=========================================
 	
 //	The upper one will accept HTTP strictly security and the lawyer one will accept AuthenticationManagerBuilder .
 	
@@ -75,12 +81,46 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * 
 	 * with the authorities that the user want to maintain.
 	 */
+	
+	/*
+	 * @Override protected void configure(AuthenticationManagerBuilder auth) throws
+	 * Exception {
+	 * auth.inMemoryAuthentication().withUser("vendor").password("12345").
+	 * authorities("admin").and().
+	 * withUser("user1").password("user@123").authorities("read").and().
+	 * passwordEncoder(NoOpPasswordEncoder.getInstance());
+	 * 
+	 * 
+	 * }
+	 */
+	
+	
+	//===================================InMemoryUserDetailsManager=========================================
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("vendor").password("12345").authorities("admin").and().
-		withUser("user1").password("user@123").authorities("read").and().
-		passwordEncoder(NoOpPasswordEncoder.getInstance());
-		
-	
+		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+		UserDetails user1 = User.withUsername("admin").password("12345").authorities("admin").build();
+		UserDetails user2 = User.withUsername("user").password("12345").authorities("read").build();
+		userDetailsManager.createUser(user1);
+		userDetailsManager.createUser(user2);
+		auth.userDetailsService(userDetailsManager);
 	}
+
+	/*
+	 * We have to create a been by password and quarter and I am returning no
+	 * password encoder as the type
+	 * 
+	 * for this be here my spring security since it's a find it being of by password
+	 * encoder.
+	 * 
+	 * It takes this as a default password encoder that it has to assume for this
+	 * user details custom configurations
+	 * 
+	 * that we have been here with error.
+	 */
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
 }
