@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -21,55 +22,52 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	protected void configure(HttpSecurity http) throws Exception {
 
-		/*===========default configuration==========*/
-		
+		/* ===========default configuration========== */
+
 		/*
 		 * http.authorizeRequests((requests) -> requests.anyRequest().authenticated());
 		 * http.formLogin(); http.httpBasic();
 		 */
-		
-		
-		/*===========custom configuration============*/
-		
-		
-		  http.authorizeRequests(requests -> {
-		  requests.antMatchers("/user","/userList").authenticated().
-		  antMatchers("/home").permitAll();
-		  
-		  }); http.formLogin(); http.httpBasic();
-		 
 
-		/*===========Deny all request configuration============*/
-		
+		/* ===========custom configuration============ */
+
+		http.authorizeRequests(requests -> {
+			requests.antMatchers("/user", "/userList").authenticated().antMatchers("/home").permitAll();
+
+		});
+		http.formLogin();
+		http.httpBasic();
+
+		/* ===========Deny all request configuration============ */
+
 		/*
 		 * http.authorizeRequests((requests) -> requests.anyRequest().denyAll());
 		 * http.formLogin(); http.httpBasic();
 		 */
-		  
-		  /*===========Permit all request configuration============*/
-			
+
+		/* ===========Permit all request configuration============ */
+
 		/*
 		 * http.authorizeRequests((requests) -> requests.anyRequest().permitAll());
 		 * http.formLogin(); http.httpBasic();
 		 */
-		 
-		
+
 	}
-	//===================================IN Memory Authentication=========================================
-	
+	// ===================================IN Memory
+	// Authentication=========================================
+
 //	The upper one will accept HTTP strictly security and the lawyer one will accept AuthenticationManagerBuilder .
-	
+
 	/*
 	 * So this is a method where if you want to customize, you will use a user
 	 * details password encoders along with authentication providers.
 	 */
-	
-	
+
 	/*
 	 * If you want to configure your own users and multiple users, as you can see
 	 * here for now, we are going to use in memory authentication.
 	 */
-	
+
 	/*
 	 * That means all these users that we want to maintain will be stored inside
 	 * memory of spring container,
@@ -85,7 +83,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * 
 	 * with the authorities that the user want to maintain.
 	 */
-	
+
 	/*
 	 * @Override protected void configure(AuthenticationManagerBuilder auth) throws
 	 * Exception {
@@ -97,10 +95,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * 
 	 * }
 	 */
-	
-	
-	//===================================InMemoryUserDetailsManager=========================================
-	
+
+	// ===================================InMemoryUserDetailsManager=========================================
+
 	/*
 	 * @Override protected void configure(AuthenticationManagerBuilder auth) throws
 	 * Exception { InMemoryUserDetailsManager userDetailsManager = new
@@ -124,11 +121,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * 
 	 * that we have been here with error.
 	 */
+
+	/*
+	 * @Bean PasswordEncoder passwordEncoder() { return
+	 * NoOpPasswordEncoder.getInstance(); }
+	 */
+
 	
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
-    
-    
+	  @Bean PasswordEncoder passwordEncoder() { return
+	  new BCryptPasswordEncoder(); }
+	 
+
 }
